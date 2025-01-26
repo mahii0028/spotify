@@ -1,11 +1,11 @@
-import { assets } from "../assets/frontend-assets/assets";
-import { useContext } from "react";
-import { PlayerContext } from "../context/PlayerContext";
+import { assets } from '../assets/assets';
+import { useContext } from 'react';
+import { PlayerContext } from '../context/PlayerContext';
 
 const Player = () => {
   const { track, seekBar, seekBg, playStatus, play, pause, time, previous, next, seekSong } = useContext(PlayerContext);
 
-  return (
+  return track ? (
     <div className="h-[10%]  bg-black flex justify-between items-center text-white px-4">
       <div className="hidden lg:flex items-center gap-4">
         <img className="w-12" src={track.image} alt="song-image" />
@@ -53,7 +53,7 @@ const Player = () => {
         <img className="w-4" src={assets.zoom_icon} alt="zoom_icon" />
       </div>
     </div>
-  );
+  ) : null;
 };
 
 export default Player;

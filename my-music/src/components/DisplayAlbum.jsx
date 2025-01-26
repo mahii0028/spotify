@@ -1,15 +1,25 @@
 import { Fragment, useContext } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "./Navbar";
-import { albumsData, assets, songsData } from "../assets/frontend-assets/assets";
-import { PlayerContext } from "../context/PlayerContext";
+import { assets } from '../assets/assets';
+import { PlayerContext } from '../context/PlayerContext';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
-const DisplayAlbum = () => {
+const DisplayAlbum = ({ album }) => {
   const { id } = useParams();
-  const albumData = albumsData[id];
-  const { playWithId } = useContext(PlayerContext);
+  const [albumData, setAlbumData] = useState('');
+  const { playWithId, songsData, albumsData } = useContext(PlayerContext);
 
-  return (
+  useEffect(() => {
+    albumsData.map((item, i) => {
+      if (item._id == id) {
+        setAlbumData(item);
+      }
+    });
+  }, []);
+
+  return albumData ? (
     <Fragment>
       <Navbar />
       <div className="mt-10 flex gap-8 flex-col md:flex-row md:items-end">
@@ -35,24 +45,26 @@ const DisplayAlbum = () => {
         <img className="m-auto w-4" src={assets.clock_icon} alt="" />
       </div>
       <hr />
-      {songsData.map((song, index) => (
-        <div
-          onClick={() => playWithId(song.id)}
-          className="grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 items-center text-[#a7a7a7] hover:bg-[#ffffff2b] cursor-pointer"
-          key={index}
-        >
-          <p className="text-white">
-            <b className="mr-4 text-[#a7a7a7]">{index + 1}</b>
-            <img className="inline w-10 mr-5" src={song.image} alt="" />
-            {song.name}
-          </p>
-          <p className="text-[15px]">{albumData.name}</p>
-          <p className="text-[15px] hidden sm:block ">5 days ago</p>
-          <p className="text-[15px] text-center">{song.duration}</p>
-        </div>
-      ))}
+      {songsData
+        .filter((item) => item.album === album.name)
+        .map((song, index) => (
+          <div
+            onClick={() => playWithId(song._id)}
+            className="grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 items-center text-[#a7a7a7] hover:bg-[#ffffff2b] cursor-pointer"
+            key={index}
+          >
+            <p className="text-white">
+              <b className="mr-4 text-[#a7a7a7]">{index + 1}</b>
+              <img className="inline w-10 mr-5" src={song.image} alt="" />
+              {song.name}
+            </p>
+            <p className="text-[15px]">{albumData.name}</p>
+            <p className="text-[15px] hidden sm:block ">5 days ago</p>
+            <p className="text-[15px] text-center">{song.duration}</p>
+          </div>
+        ))}
     </Fragment>
-  );
+  ) : null;
 };
 
 export default DisplayAlbum;
